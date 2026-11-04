@@ -1,16 +1,16 @@
-# Builds the app and checks the catalogues on every pull request and push to main, with tools/check.sh: the same
-# script contributors run before pushing, so a PR shows whether it still builds before anyone tries it on a TV.
+# Builds the app and checks the catalogues on every pull request and push to master and beta, with tools/check.sh:
+# the same script contributors run before pushing, so a PR shows whether it still builds before anyone tries it on a TV.
 name: Check
 
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [master, beta]
 
 permissions:
   contents: read
 
-# A new push to a PR cancels the run for the push before it (on main, every merge keeps its own run).
+# A new push to a PR cancels the run for the push before it (on master and beta, every merge keeps its own run).
 concurrency:
   group: check-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
