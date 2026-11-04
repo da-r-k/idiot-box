@@ -2806,8 +2806,11 @@ final class HomeView extends ViewGroup implements Choreographer.FrameCallback, H
             in = Ui.clamp((up - photoAt) / PHOTO_FADE_MS);
             if (in < 1) sky.postInvalidateOnAnimation();
         }
-        if (bg == null || in < 1) drawImage(c, b.nightImage, alpha);
-        if (bg != null) drawImage(c, bg, alpha * in * in * (3 - 2 * in));
+        float s = bg == null ? 0 : in * in * (3 - 2 * in);
+        // The blur and the photo together cover exactly `alpha` of what's under them, so the swap behind them
+        // doesn't jump back when the blur goes (two layers at `alpha` each cover more than `alpha`).
+        if (s < 1) drawImage(c, b.nightImage, alpha * (1 - s) / (1 - alpha * s));
+        if (bg != null) drawImage(c, bg, alpha * s);
     }
 
     /** Dark on the left (the hero's text) and at the bottom (the row and the shelf), a little at the top (the tabs). */
